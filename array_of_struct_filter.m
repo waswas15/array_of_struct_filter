@@ -11,20 +11,27 @@ function [result] = array_of_struct_filter(data,query)
 %        result : structure similar to data containing elements matching
 %        the query only
 %         
-% Example : 
-
-%         query = struct();
-%         query.Name = 'Robert';
-%         query.Day = 'Monday';
-%         query.Month = 'June';
-%         
+% Examples : 
 %         [~,~,data] = xlsread('file.csv')
 %         colHeadings = data(1,:);
 %         data = cell2struct(data, colHeadings, 2);
-%         result = array_of_struct_filter(data,query)
+%         query1 = struct();
+%         query1.Name = 'Robert';
+%         query1.Mdate = 1;
+%         query1.Day = 'Monday';
+%         query1.Month = 'June';
+%         result1 = array_of_struct_filter(data,query1)
+
+%         query2 = struct();
+%         query2.Name = {'Robert','Peter'};
+%         query2.Mdate = [1,2];
+%         query2.Day = {'Monday','Friday','Saturday'};
+%         query2.Month = 'June';    
+%         result2 = array_of_struct_filter(data,query2)
 
 debug_data = {};
-result = true(1,length(data));
+N = length(data);
+result = true(1,N);
 if ~(isstruct(data) && isstruct(query))
     err = '(data) and/or (query) type is not structure';
     debug_data{end+1} = err;
@@ -52,10 +59,41 @@ memb_test = ismember(query_fnames,data_fnames);
 if all(memb_test)
     for i = 1:length(query_fnames)
         field = char(query_fnames(i));
+%         handle numeric query fields including array of numeric
         if (isnumeric(data(1).(field)))
-            result = result & ([data.(field)] == query.(field));
+            if (isnumeric(query.(field)))
+                query_length = length(query.(field));
+                temp_result = false(1,N);
+                for j=1:query_length
+                    query_item = query.(field)(j);
+                    temp_result = temp_result | ([data.(field)] == query_item);
+                end
+                result = result & temp_result;
+            else
+                err = sprintf('query at field (%s) is of unknown type',field);
+                debug_data{end+1} = err;
+                error(err);
+            end
+%          handle fields of type char including query fields including
+%          multiple char values in a cell
         elseif (ischar(data(1).(field)))
-            result = result & (strcmp({data.(field)},query.(field)));
+            
+            if (ischar(query.(field)))
+                result = result & (strcmp({data.(field)},query.(field)));
+            elseif (iscell(query.(field)))
+                query_length = length(query.(field));
+                temp_result = false(1,N);
+                for j=1:query_length
+                    query_item = query.(field)(j);
+                    temp_result = temp_result | (strcmp({data.(field)},query_item));
+                end
+                result = result & temp_result;
+            else
+                err = sprintf('query at field (%s) is of unknown type',field);
+                debug_data{end+1} = err;
+                error(err);
+            end
+            
         else
             err = sprintf('data at field (%s) is of unknown type',field);
             debug_data{end+1} = err;
