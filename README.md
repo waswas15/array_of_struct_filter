@@ -22,7 +22,7 @@
          query1.Day = 'Monday';
          query1.Month = 'June';
          result1 = array_of_struct_filter(data,query1);
-		 ```
+```
 ```matlab
          query2 = struct();
          query2.Name = {'Robert','Peter'};
@@ -30,4 +30,4 @@
          query2.Day = {'Monday','Friday','Saturday'};
          query2.Month = 'June';    
          result2 = array_of_struct_filter(data,query2);
-		 ```
+```
