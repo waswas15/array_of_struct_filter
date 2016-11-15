@@ -1,18 +1,18 @@
-#H1 array_of_struct_filter.m function
+# array_of_struct_filter.m function
 Emphasis filtering array of structures
-#H2 Input :
-#         data: array structure containing data that can be accessed using
-#         field names and indices
-#         query : structure containing values assigned to fieldnames
-#         matching existing filednames in data
-#
-#
-#H2 Output :
-#        result : structure similar to data containing elements matching
-#        the query only
-#         
-#H2 Examples :
-1. ```
+### Input :
+         data: array structure containing data that can be accessed using
+         field names and indices
+         query : structure containing values assigned to fieldnames
+         matching existing filednames in data
+
+
+### Output :
+        result : structure similar to data containing elements matching
+        the query only
+         
+### Examples :
+1. ```matlab
          [~,~,data] = xlsread('file.csv')
          colHeadings = data(1,:);
          data = cell2struct(data, colHeadings, 2);
@@ -23,7 +23,7 @@ Emphasis filtering array of structures
          query1.Month = 'June';
          result1 = array_of_struct_filter(data,query1)
 		 ```
-2. ```
+2. ```matlab
          query2 = struct();
          query2.Name = {'Robert','Peter'};
          query2.Mdate = [1,2];
