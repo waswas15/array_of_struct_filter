@@ -1,5 +1,5 @@
 # array_of_struct_filter.m function
-Emphasis filtering array of structures
+*filtering array of structures*
 ### Input :
          data: array structure containing data that can be accessed using
          field names and indices
